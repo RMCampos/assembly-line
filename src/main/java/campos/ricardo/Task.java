@@ -1,5 +1,7 @@
 package campos.ricardo;
 
+import java.util.Objects;
+
 class Task {
     private final String name;
     private final Integer durationInMinutes;
@@ -9,16 +11,30 @@ class Task {
         this.durationInMinutes = duration;
     }
 
-    @Override
-    public String toString() {
-        return "";
-    }
-
     public Integer getDurationInMinutes() {
         return durationInMinutes;
     }
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return name.equals(task.name) &&
+            durationInMinutes.equals(task.durationInMinutes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, durationInMinutes);
     }
 }

@@ -37,26 +37,20 @@ class Time {
         this.minutes = 0;
     }
 
-    public Time addMinutes(Integer minutes) {
-        Time time = new Time();
-        time.setHours(getHours());
-        time.setMinutes(getMinutes());
-
-        time.minutes += minutes;
-        if (time.minutes >= 60) {
-            time.hours += 1;
-            time.minutes -= 60;
+    public void addMinutes(Integer minutes) {
+        this.minutes += minutes;
+        if (this.minutes >= 60) {
+            this.hours += 1;
+            this.minutes -= 60;
         }
 
-        if (time.hours > 12) {
-            time.hours -= 12;
+        if (this.hours > 24) {
+            this.hours -= 24;
         }
-
-        return time;
     }
 
-    public Time subtractMinutes(Integer minutes) {
-        return this.addMinutes(minutes * -1);
+    public void subtractMinutes(Integer minutes) {
+        this.addMinutes(minutes * -1);
     }
 
     public void setHours(Integer hours) {

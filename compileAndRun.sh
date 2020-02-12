@@ -8,4 +8,4 @@ if [ "$?" -ne 0 ]; then
 fi
 
 cd target/
-java -jar assembly-line-1.0-SNAPSHOT.jar < input.txt
+java -jar assembly-line-1.0-SNAPSHOT.jar < ../input.txt

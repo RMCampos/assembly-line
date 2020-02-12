@@ -62,27 +62,60 @@ public class App {
     }
 
     private void processTaks(List<Task> tasks) {
-        final String startTimeStr = "9:00 am";
-        Time startTime = Time.fromString(startTimeStr);
-        TimeLine timeLine = new TimeLine(startTime);
-
-        Integer assemblyLineCount = 1;
-        System.out.println("Linha de montagem " + assemblyLineCount);
-
+        Integer assemblyLineCount = 0;
         while (!tasks.isEmpty()) {
+            assemblyLineCount++;
+            System.out.println(String.format("Linha de montagem %d:", assemblyLineCount));
+
+            final TimeLine timeLine = new TimeLine();
+
+            /* Morning assembly steps: 3 hours */
+            Integer morningAmount = 0;
+            final List<Task> morningList = new ArrayList<>();
             for (int i=0,len=tasks.size(); i<len;i++) {
                 Task task = tasks.get(i);
 
-                if (timeLine.executeTask(task)) {
-                    tasks.remove(task);
-                    len--;
-                } else {
-                    assemblyLineCount += 1;
-                    System.out.println("Linha de montagem " + assemblyLineCount);
-                    startTime = Time.fromString(startTimeStr);
-                    timeLine.setCurrentTime(startTime);
+                Integer test = morningAmount + task.getDurationInMinutes();
+
+                if (test.compareTo(Constraints.MORNING_MAX_MINUTES) <= 0) {
+                    morningList.add(task);
+                    morningAmount += task.getDurationInMinutes();
+                }
+
+                if (morningAmount.equals(Constraints.MORNING_MAX_MINUTES)) {
+                    break;
                 }
             }
+
+            tasks.removeAll(morningList);
+            morningList.forEach(task -> timeLine.printTask(task));
+
+            /* Lunch time */
+            final Task lunch = new Task("Almoço", Constraints.LUNCH_INTERVAL_MINUTES);
+            timeLine.printTask(lunch);
+
+            /* Afternoon assembly steps: 4 hours minumun or less than 5 hours */
+            Integer afternoonAmount = 0;
+            List<Task> afternoonList = new ArrayList<>();
+            for (int i=0,len=tasks.size(); i<len;i++) {
+                Task task = tasks.get(i);
+
+                Integer test = afternoonAmount + task.getDurationInMinutes();
+
+                if (test.compareTo(Constraints.AFTERNOON_MAX_MINUTES) <= 0) {
+                    afternoonList.add(task);
+                    afternoonAmount += task.getDurationInMinutes();
+                }
+            }
+
+            tasks.removeAll(afternoonList);
+            afternoonList.forEach(task -> timeLine.printTask(task));
+
+            /* Labor gymnastics activities */
+            final Task laborGymn = new Task("Ginástica laboral", 0);
+            timeLine.printTask(laborGymn);
+
+            System.out.println();
         }
     }
 
