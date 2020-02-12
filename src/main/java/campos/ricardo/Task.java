@@ -17,4 +17,8 @@ class Task {
     public Integer getDurationInMinutes() {
         return durationInMinutes;
     }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Hello world!
- *
- */
 public class App {
     private List<String> readFromInputFile() {
         try {
@@ -27,7 +23,7 @@ public class App {
             bufferedReader.close();
             inputStreamReader.close();
 
-            return Arrays.asList(sb.toString().split(LINE_DIVISOR));
+            return Arrays.asList(sb.toString().split("\\" + LINE_DIVISOR));
         } catch (IOException ioe) {
             System.out.println("Sorry! IOexception captured: " + ioe.getLocalizedMessage());
             ioe.printStackTrace();
@@ -40,6 +36,11 @@ public class App {
         List<Task> tasks = new ArrayList<>();
 
         for (String assembly : lines) {
+            if (assembly.toLowerCase().contains("maintenance")) {
+                tasks.add(new Task(assembly.replace(" - maintenance", ""), 5));
+                continue;
+            }
+
             if (!assembly.toLowerCase().endsWith("min")) {
                 System.out.println("Line doesn't match the expected format (ends with min expression): " + assembly);
                 continue;
@@ -56,17 +57,31 @@ public class App {
 
             tasks.add(new Task(assembly, durationInMinutes));
         }
+
+        return tasks;
     }
 
     private void processTaks(List<Task> tasks) {
-        final String startTime = "9:00 am";
+        final String startTimeStr = "9:00 am";
+        Time startTime = Time.fromString(startTimeStr);
         TimeLine timeLine = new TimeLine(startTime);
 
-        for (Task task : tasks) {
-            try {
-                timeLine.addTimeInMinutes(task.getDurationInMinutes());
-            } catch (Exception e) {
-                // !?
+        Integer assemblyLineCount = 1;
+        System.out.println("Linha de montagem " + assemblyLineCount);
+
+        while (!tasks.isEmpty()) {
+            for (int i=0,len=tasks.size(); i<len;i++) {
+                Task task = tasks.get(i);
+
+                if (timeLine.executeTask(task)) {
+                    tasks.remove(task);
+                    len--;
+                } else {
+                    assemblyLineCount += 1;
+                    System.out.println("Linha de montagem " + assemblyLineCount);
+                    startTime = Time.fromString(startTimeStr);
+                    timeLine.setCurrentTime(startTime);
+                }
             }
         }
     }
@@ -81,31 +96,6 @@ public class App {
         final List<Task> tasks = preProcessing(lines);
 
         processTaks(tasks);
-
-        // process here
-        //String currentTime = MORNING_START;
-        //int count = 1;
-        //boolean isGymLaborTime = false;
-
-        //final String MSG_TEMPLATE = "Linha de montagem %d:";
-        //System.out.println(String.format(MSG_TEMPLATE, count));
-
-        for (String assembly : lines) {
-            currentTime = TimeUtil.addMinutosToTime(currentTime, durationInMinutes);
-
-            if (TimeUtil.isBeforeOrEqualsTo(currentTime, MORNING_END)) {
-                String moment = TimeUtil.formatCurrentTime(currentTime);
-                System.out.println(moment + " " + assembly);
-            } else {
-                System.out.println("Almoço");
-            }
-
-             */
-
-            //if (isGymLaborTime) {
-            //    System.out.println(String.format(MSG_TEMPLATE, ++count));
-            //}
-        }
     }
 
     public static void main( String[] args ) {

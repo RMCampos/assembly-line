@@ -8,19 +8,40 @@ class TimeLine {
     private final String LABOR_GYM_MAX = "5:00 pm";
     private final String MAINTENANCE_DURATION = "5 min";
 
-    private String currentTime;
-    private String nextStop;
+    private Time currentTime;
+    private Time nextStop;
 
-    public TimeLine(String startTime) {
-        this.currentTime = currentTime.toLowerCase();
-        updateNextStop();
+    public TimeLine(Time startTime) {
+        this.currentTime = startTime;
     }
 
-    public void addTimeInMinutes(Integer minutes) throws Exception {
+    public boolean executeTask(Task task) {
+        final Time after = this.currentTime.addMinutes(task.getDurationInMinutes());
 
+        if (after.isBeforeNoon()) {
+            System.out.println(TimeUtil.format(this.currentTime) + " " + task.getName());
+            this.currentTime = this.currentTime.addMinutes(task.getDurationInMinutes());
+            return true;
+        } else {
+            if (after.isLunchTime()) {
+                System.out.println(TimeUtil.format(this.currentTime) + " " + task.getName());
+                this.currentTime = this.currentTime.addMinutes(60);
+                System.out.println(TimeUtil.format(after) + " Almoço");
+            } else {
+                if (after.getHours().compareTo(17) >= 0) {
+                    this.currentTime = this.currentTime.subtractMinutes(task.getDurationInMinutes());
+                    return false;
+                } else {
+                    System.out.println(TimeUtil.format(this.currentTime) + " " + task.getName());
+                    this.currentTime = this.currentTime.addMinutes(task.getDurationInMinutes());
+                }
+            }
+        }
+
+        return false;
     }
 
-    private boolean updateNextStop() {
-        if (TimeUtil)
+    public void setCurrentTime(Time currentTime) {
+        this.currentTime = currentTime;
     }
 }
