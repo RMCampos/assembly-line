@@ -32,14 +32,14 @@ class Time {
         return timeLocal;
     }
 
-    public Time() {
+    private Time() {
         this.hours = 0;
         this.minutes = 0;
     }
 
     public void addMinutes(Integer minutes) {
         this.minutes += minutes;
-        if (this.minutes >= 60) {
+        while (this.minutes >= 60) {
             this.hours += 1;
             this.minutes -= 60;
         }
@@ -47,10 +47,6 @@ class Time {
         if (this.hours > 24) {
             this.hours -= 24;
         }
-    }
-
-    public void subtractMinutes(Integer minutes) {
-        this.addMinutes(minutes * -1);
     }
 
     public void setHours(Integer hours) {
@@ -67,14 +63,5 @@ class Time {
 
     public Integer getMinutes() {
         return minutes;
-    }
-
-    public boolean isBeforeNoon() {
-        return this.hours.compareTo(12) < 0;
-    }
-
-    public boolean isLunchTime() {
-        return this.hours.equals(12) &&
-            this.minutes.equals(0);
     }
 }

@@ -8,6 +8,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class App {
+    private boolean readFromInput;
+
+    public App() {
+        this(true);
+    }
+
+    public App(boolean readFromInput) {
+        this.readFromInput = readFromInput;
+    }
+
     private List<String> readFromInputFile() {
         try {
             final InputStreamReader inputStreamReader = new InputStreamReader(System.in);
@@ -120,7 +130,12 @@ public class App {
     }
 
     private void start() {
-        final List<String> lines = readFromInputFile();
+        final List<String> lines = new ArrayList<>();
+
+        if (readFromInput) {
+            lines.addAll(readFromInputFile());
+        }
+
         if (lines.isEmpty()) {
             System.out.println("Nothing to do!");
             return;
